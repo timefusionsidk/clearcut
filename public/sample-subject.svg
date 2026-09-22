@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="640" height="640">
+  <defs>
+    <linearGradient id="vase" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F6EFE6"/>
+      <stop offset=".55" stop-color="#E3D5C4"/>
+      <stop offset="1" stop-color="#C9B49E"/>
+    </linearGradient>
+    <linearGradient id="leafA" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#2F6B4F"/>
+      <stop offset="1" stop-color="#5FA47C"/>
+    </linearGradient>
+    <linearGradient id="leafB" x1="1" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#27573F"/>
+      <stop offset="1" stop-color="#4E8E69"/>
+    </linearGradient>
+  </defs>
+  <g>
+    <path d="M318 332c-18-54-62-92-118-104 44-34 96-26 124 16 20-46 66-66 114-52-38 26-58 72-60 118z" fill="url(#leafA)"/>
+    <path d="M330 342c4-72 34-128 86-166-14 62-26 112-58 166z" fill="url(#leafB)" opacity=".9"/>
+    <path d="M238 352h164l-16 176a44 44 0 0 1-44 40h-44a44 44 0 0 1-44-40z" fill="url(#vase)"/>
+    <path d="M238 352h164l-4 40H242z" fill="#B69F86" opacity=".55"/>
+    <ellipse cx="320" cy="352" rx="82" ry="14" fill="#F8F3EC"/>
+    <path d="M276 392c-6 60-4 112 8 158" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="10" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>
