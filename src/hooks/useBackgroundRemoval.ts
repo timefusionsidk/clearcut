@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { compressForUpload } from '@/lib/compose'
+import { removeBackgroundLocally } from '@/lib/local-removal'
 import { validateFile } from '@/lib/validate'
 import type { AppError, ProcessStage } from '@/lib/types'
 
@@ -27,7 +28,7 @@ const initial: State = {
 
 export function useBackgroundRemoval() {
   const [state, setState] = useState<State>(initial)
-  const xhrRef = useRef<XMLHttpRequest | null>(null)
+  const taskRef = useRef(0)
   const urlsRef = useRef<string[]>([])
 
   const track = (url: string) => {
@@ -41,15 +42,13 @@ export function useBackgroundRemoval() {
   }, [])
 
   const reset = useCallback(() => {
-    xhrRef.current?.abort()
-    xhrRef.current = null
+    taskRef.current += 1
     releaseUrls()
     setState(initial)
   }, [releaseUrls])
 
   const cancel = useCallback(() => {
-    xhrRef.current?.abort()
-    xhrRef.current = null
+    taskRef.current += 1
     setState((s) => ({ ...initial, originalUrl: s.originalUrl, fileName: s.fileName, fileSize: s.fileSize }))
   }, [])
 
@@ -71,6 +70,7 @@ export function useBackgroundRemoval() {
         fileSize: file.size,
       })
 
+      const task = ++taskRef.current
       let payload: File
       try {
         payload = await compressForUpload(file)
@@ -78,83 +78,28 @@ export function useBackgroundRemoval() {
         payload = file
       }
 
-      const body = new FormData()
-      body.append('image', payload, payload.name || 'upload')
-
-      const xhr = new XMLHttpRequest()
-      xhrRef.current = xhr
-      xhr.open('POST', '/api/remove-background')
-      xhr.responseType = 'blob'
-
-      xhr.upload.onprogress = (event) => {
-        if (!event.lengthComputable) return
-        const pct = Math.round((event.loaded / event.total) * 100)
-        setState((s) => (s.stage === 'uploading' ? { ...s, progress: pct } : s))
-      }
-
-      xhr.upload.onload = () => {
-        // Bytes are with the server now; the provider does the slow part.
-        setState((s) => ({ ...s, stage: 'detecting', progress: 100 }))
-        window.setTimeout(
-          () => setState((s) => (s.stage === 'detecting' ? { ...s, stage: 'removing' } : s)),
-          1200,
-        )
-      }
-
-      xhr.onload = async () => {
-        xhrRef.current = null
-        const blob = xhr.response as Blob
-
-        if (xhr.status === 200 && blob && blob.type.startsWith('image/')) {
-          setState((s) => ({ ...s, stage: 'preparing' }))
-          const cutoutUrl = track(URL.createObjectURL(blob))
-          setState((s) => ({ ...s, stage: 'done', cutoutUrl, error: null }))
-          return
-        }
-
-        const parsed = await readError(blob)
-        setState((s) => ({
-          ...s,
-          stage: 'error',
-          error: parsed ?? {
-            code: 'failed',
-            message: 'We could not remove the background. Please try another image.',
-          },
-        }))
-      }
-
-      xhr.onerror = () => {
-        xhrRef.current = null
+      try {
+        const blob = await removeBackgroundLocally(payload, (stage, progress) => {
+          if (task !== taskRef.current) return
+          setState((s) => ({ ...s, stage, progress: progress ?? s.progress }))
+        })
+        if (task !== taskRef.current) return
+        const cutoutUrl = track(URL.createObjectURL(blob))
+        setState((s) => ({ ...s, stage: 'done', progress: 100, cutoutUrl, error: null }))
+      } catch {
+        if (task !== taskRef.current) return
         setState((s) => ({
           ...s,
           stage: 'error',
           error: {
-            code: 'network',
-            message: 'The connection dropped before processing finished. Check your network and try again.',
+            code: 'local_processing_failed',
+            message: 'This device could not process the image locally. Try a smaller image or a newer browser.',
           },
         }))
       }
-
-      xhr.onabort = () => {
-        xhrRef.current = null
-      }
-
-      xhr.send(body)
     },
     [releaseUrls],
   )
 
   return { ...state, process, reset, cancel }
-}
-
-async function readError(blob: Blob | null): Promise<AppError | null> {
-  if (!blob) return null
-  try {
-    const text = await blob.text()
-    const json = JSON.parse(text) as { code?: string; error?: string }
-    if (!json.error) return null
-    return { code: json.code ?? 'failed', message: json.error }
-  } catch {
-    return null
-  }
 }

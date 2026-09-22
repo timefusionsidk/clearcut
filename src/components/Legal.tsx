@@ -41,27 +41,24 @@ function Privacy() {
 
       <Section title="Images are processed temporarily only">
         <p>
-          An image you upload is sent to our processing function, passed to an AI background-removal
-          provider, and returned to your browser as a transparent PNG. It is held in memory for the
-          length of that single request and is then discarded. We do not write uploads or results to
-          a database, a storage bucket or a disk.
+          The AI model is downloaded directly by your browser and processes your image on your own
+          device. ClearCut does not receive, upload, write or store the image or the resulting PNG.
         </p>
       </Section>
 
       <Section title="Images are not intentionally stored permanently">
         <p>
           We do not keep copies of your images, do not build galleries or project histories, and have
-          no way to retrieve an image you processed earlier. Any temporary copy created while
-          processing is deleted as soon as processing finishes.
+          no way to retrieve an image you processed earlier. Your browser may cache the AI model to
+          make future removals faster; that model cache does not contain your images.
         </p>
       </Section>
 
-      <Section title="Third-party AI processing">
+      <Section title="AI model delivery">
         <p>
-          Background removal is performed by a third-party AI provider. Your image is shared with
-          that provider only to perform the removal you requested, and is subject to their own data
-          policy for the duration of that request. We do not send them your name, email or any other
-          personal detail, because we do not collect any.
+          Your browser downloads the open model files from our selected model host. The model host
+          receives a normal file-download request, not your image. We do not send them your name,
+          email or image data.
         </p>
       </Section>
 
@@ -74,17 +71,17 @@ function Privacy() {
 
       <Section title="Advertising">
         <p>
-          The site is funded by ads, including a rewarded ad you watch before downloading. Ad networks
-          may set cookies or use device identifiers to serve and measure ads, as described in their own
-          policies. We do not sell data, and we do not pass your images to advertisers.
+          The site may be funded by standard display ads. Ad networks may set cookies or use device
+          identifiers to serve and measure ads, as described in their own policies. We do not sell data,
+          and we never pass your images to advertisers.
         </p>
       </Section>
 
       <Section title="What we log">
         <p>
-          Our server records the outcome of a processing request — whether it succeeded, failed or was
-          rate limited — plus a short-lived record of request counts per IP address to prevent abuse.
-          We do not log image contents, filenames or API keys.
+          ClearCut has no image-processing server. Our hosting and advertising providers may collect
+          standard technical request logs under their own policies. We do not log image contents,
+          filenames or API keys.
         </p>
       </Section>
 
@@ -104,8 +101,8 @@ function Terms() {
       <Section title="Using ClearCut">
         <p>
           ClearCut is provided free of charge, as is, with no uptime or accuracy guarantee. You may use
-          it for personal and commercial work. Automated or bulk use, scraping the processing endpoint,
-          or attempting to bypass the rate limits or the rewarded-ad step is not permitted.
+          it for personal and commercial work. Automated or bulk use that makes the public website
+          unavailable for others is not permitted.
         </p>
       </Section>
 
@@ -125,10 +122,7 @@ function Terms() {
       </Section>
 
       <Section title="Ads">
-        <p>
-          Downloads are unlocked by completing a rewarded ad. Blocking or interfering with the ad
-          leaves the download locked. We do not use pop-ups, forced redirects or auto-clicking ads.
-        </p>
+        <p>ClearCut may show standard display ads. We do not use forced redirects or auto-clicking ads.</p>
       </Section>
 
       <Section title="Liability">

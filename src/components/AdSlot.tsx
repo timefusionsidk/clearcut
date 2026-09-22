@@ -1,4 +1,5 @@
-import { adConfig } from '@/lib/ads'
+import { useEffect, useState } from 'react'
+import { adConfig, mountDisplayAd } from '@/lib/ads'
 
 /**
  * Non-intrusive display banner. Sits between content sections, never over the
@@ -9,14 +10,20 @@ import { adConfig } from '@/lib/ads'
  * VITE_AD_BANNER_SLOT. Leave the wrapper and height as they are.
  */
 export function AdSlot({ label = 'Advertisement' }: { label?: string }) {
+  const [configured, setConfigured] = useState(false)
+
+  useEffect(() => {
+    void mountDisplayAd('clearcut-banner-slot').then(setConfigured)
+  }, [])
+
   return (
     <aside aria-label={label} className="mx-auto w-full max-w-4xl px-4 sm:px-6">
-      <div className="flex h-[92px] items-center justify-center overflow-hidden rounded-xl border border-dashed border-line bg-surface/60">
-        {adConfig.bannerSlot ? (
-          <div id="clearcut-banner-slot" data-slot={adConfig.bannerSlot} className="h-full w-full" />
-        ) : (
+      <div id="clearcut-banner-slot" className="flex h-[92px] items-center justify-center overflow-hidden rounded-xl border border-dashed border-line bg-surface/60">
+        {!configured && (
           <p className="px-4 text-center text-[12px] text-ink-faint">
-            Ad space — ads pay for the free processing. No pop-ups, no redirects.
+            {adConfig.provider === 'admanager'
+              ? 'Advertisement unavailable right now.'
+              : 'ClearCut is free and processes images on your device.'}
           </p>
         )}
       </div>

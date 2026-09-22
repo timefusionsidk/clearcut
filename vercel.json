@@ -9,11 +9,5 @@
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
       ]
     }
-  ],
-  "functions": {
-    "api/remove-background.ts": {
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  }
+  ]
 }

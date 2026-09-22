@@ -1,4 +1,4 @@
-import { Download, Lock, Sparkles } from 'lucide-react'
+import { Download, Sparkles } from 'lucide-react'
 import { Button } from './ui/Button'
 import { Segmented } from './ui/Segmented'
 import { cn } from '@/lib/utils'
@@ -12,7 +12,6 @@ type Props = {
   onFormat: (format: DownloadFormat) => void
   onQuality: (quality: DownloadQuality) => void
   onDownload: () => void
-  unlocked: boolean
   busy: boolean
   transparent: boolean
   hdAvailable: boolean
@@ -25,7 +24,6 @@ export function DownloadPanel({
   onFormat,
   onQuality,
   onDownload,
-  unlocked,
   busy,
   transparent,
   hdAvailable,
@@ -67,16 +65,9 @@ export function DownloadPanel({
       </p>
 
       <Button size="lg" className="w-full" onClick={onDownload} disabled={busy}>
-        {busy ? (
-          'Preparing file…'
-        ) : unlocked ? (
+        {busy ? 'Preparing file…' : (
           <>
             <Download size={17} />
-            Download {quality === 'hd' ? 'HD' : 'image'}
-          </>
-        ) : (
-          <>
-            <Lock size={16} />
             Download {quality === 'hd' ? 'HD' : 'image'}
           </>
         )}
@@ -85,13 +76,11 @@ export function DownloadPanel({
       <p
         className={cn(
           'inline-flex items-start gap-1.5 text-[12px] leading-relaxed',
-          unlocked ? 'text-accent-dark' : 'text-ink-soft',
+          'text-ink-soft',
         )}
       >
         <Sparkles size={13} className="mt-0.5 shrink-0" />
-        {unlocked
-          ? 'Unlocked for this image — download any format without watching again.'
-          : 'One short ad unlocks every format for this image.'}
+        Your edited image is created and downloaded on this device.
       </p>
     </section>
   )

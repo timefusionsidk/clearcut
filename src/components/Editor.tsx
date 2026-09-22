@@ -5,7 +5,6 @@ import { Segmented } from './ui/Segmented'
 import { BackgroundOptions } from './BackgroundOptions'
 import { AdjustPanel } from './AdjustPanel'
 import { DownloadPanel, type DownloadFormat, type DownloadQuality } from './DownloadPanel'
-import { RewardedAdGate } from './RewardedAdGate'
 import { DEFAULT_SETTINGS } from '@/lib/defaults'
 import { PREVIEW_MAX, STANDARD_MAX, canvasToBlob, compose, loadImage } from '@/lib/compose'
 import { buildFilename, saveBlob } from '@/lib/download'
@@ -31,8 +30,6 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
   const [tab, setTab] = useState<Tab>('background')
   const [format, setFormat] = useState<DownloadFormat>('png')
   const [quality, setQuality] = useState<DownloadQuality>('hd')
-  const [unlocked, setUnlocked] = useState(false)
-  const [gateOpen, setGateOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState<string | null>(null)
 
@@ -161,24 +158,9 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
     }
   }, [cutout, original, bgImage, settings, format, quality])
 
-  const requestDownload = () => {
-    if (unlocked) {
-      void writeFile()
-      return
-    }
-    setGateOpen(true)
-  }
-
-  const onRewarded = useCallback(async () => {
-    // Reached only from the ad network's own reward callback.
-    setUnlocked(true)
-    await writeFile()
-  }, [writeFile])
-
   const startOver = () => {
     clearBackgroundImage()
     setSettings(DEFAULT_SETTINGS)
-    setUnlocked(false)
     setZoom(1)
     onStartOver()
   }
@@ -209,8 +191,7 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
       quality={quality}
       onFormat={setFormat}
       onQuality={setQuality}
-      onDownload={requestDownload}
-      unlocked={unlocked}
+      onDownload={() => void writeFile()}
       busy={busy}
       transparent={transparent}
       hdAvailable={hdAvailable}
@@ -348,13 +329,6 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
           </div>
         </aside>
       </div>
-
-      <RewardedAdGate
-        open={gateOpen}
-        onClose={() => setGateOpen(false)}
-        onRewarded={onRewarded}
-        rewardLabel={quality === 'hd' ? 'your HD download' : 'your download'}
-      />
     </div>
   )
 }

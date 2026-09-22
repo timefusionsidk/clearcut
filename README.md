@@ -1,44 +1,39 @@
 # ClearCut
 
-ClearCut is a privacy-first, ad-supported web app for removing an image background. It has no user accounts and never writes uploaded images to application storage.
+ClearCut is a privacy-first web app for removing an image background. It has no user accounts, no image-processing backend and no uploaded-image storage.
 
 ## What is included
 
 - JPG, PNG and WebP upload validation (10 MB maximum)
-- Server-side removal using remove.bg, Clipdrop, PhotoRoom or Replicate
+- Browser-only removal with MIT-licensed BiRefNet Lite through Transformers.js and ONNX Runtime Web
 - In-browser result editor: transparent, colour, gradient, image and blurred backgrounds; subject adjustments and shadow
 - PNG and JPG downloads
-- Rewarded-ad download gate, including a local-development-only simulation
-- No image database or storage bucket
+- Direct, unrestricted downloads
+- Optional standard display advertisements only
 
 ## Run locally
 
-1. Copy `.env.example` to `.env.local` and add **one** background-removal provider key.
-2. Run `npm ci`.
-3. Run `npm run dev`.
-4. Use `VITE_AD_PROVIDER=demo` and `VITE_DEMO_AD_MODE=true` only for local testing.
+1. Run `npm ci`.
+2. Run `npm run dev`.
+3. Choose an image. The first processing attempt downloads the model to the browser; later attempts use the browser cache.
 
 `npm run build` performs the TypeScript check and production build.
 
 ## Deploy to Vercel
 
-Import this repository as a Vercel project. Set these production environment variables in the Vercel dashboard:
+Import this repository as a Vercel project. No secret environment variables are required for background removal.
 
 | Variable | Required | Notes |
 | --- | --- | --- |
-| `BG_PROVIDER` | Yes | `removebg`, `clipdrop`, `photoroom`, or `replicate` |
-| Matching provider key | Yes | `REMOVEBG_API_KEY`, `CLIPDROP_API_KEY`, `PHOTOROOM_API_KEY`, or `REPLICATE_API_TOKEN` |
-| `RATE_LIMIT_PER_HOUR` | Recommended | Start at `20` |
-| `VITE_AD_PROVIDER` | Yes for ad-gated downloads | Use `admanager` only after an approved rewarded placement exists |
-| `VITE_AD_REWARDED_SLOT` | Yes for Google Ad Manager | Full ad-unit path, such as `/1234567/clearcut_rewarded` |
+| `VITE_AD_PROVIDER` | Optional | Set to `admanager` only after you have an approved display placement |
 | `VITE_AD_BANNER_SLOT` | Optional | Full Google Ad Manager banner path |
 
-Never place provider secrets in a `VITE_` variable. Vite exposes those values to every browser.
+`VITE_` values are public browser configuration. Never place any private key in one.
 
 ## Launch checklist
 
-- Configure and test a real background-removal provider key in Vercel.
-- Configure an approved rewarded-ad placement. Demo mode cannot run in production.
+- Test the model download and processing path on a current Android phone, iPhone and desktop browser.
+- Configure an approved standard display placement only if you want advertising.
 - Replace the privacy-policy update date and add a public support email before launch.
-- Test a JPG, PNG and WebP on desktop and mobile; test an image near 10 MB and the rate-limit response.
-- Add a shared rate limiter (for example Upstash Redis) before scaling traffic beyond an early launch.
+- Test a JPG, PNG and WebP on desktop and mobile; test an image near 10 MB.
+- Explain to users that model download time and local performance depend on their browser and device.

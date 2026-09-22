@@ -17,7 +17,7 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
 }
 
 type ComposeInput = {
-  /** Transparent PNG returned by the AI provider. */
+  /** Transparent PNG created by the local browser model. */
   cutout: HTMLImageElement
   /** The user's original upload, needed for the "blur original" background. */
   original: HTMLImageElement | null
@@ -161,8 +161,8 @@ export function canvasToBlob(canvas: HTMLCanvasElement, type: 'image/png' | 'ima
 }
 
 /**
- * Shrinks very large uploads before they leave the device: less to transfer,
- * faster processing, and the AI providers cap resolution anyway.
+ * Shrinks very large local inputs before inference to avoid memory pressure on
+ * phones and make browser processing faster. The original never leaves device.
  */
 export async function compressForUpload(file: File, maxEdge = 2400): Promise<File> {
   if (file.size < 900 * 1024) return file

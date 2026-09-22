@@ -10,10 +10,9 @@ export function PrivacyNote() {
         <div className="max-w-2xl">
           <h2 className="font-display text-lg font-semibold">What happens to your image</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">
-            Your upload is held in memory just long enough for the AI to cut out the background, then
-            discarded. There is no account, no image gallery and no database — so there is nothing to
-            delete later. Every edit you make afterwards, including any background image you add,
-            happens on your own device.
+            Your image stays on this device. ClearCut downloads the AI model directly in your browser
+            and processes the image locally — it is not uploaded to our server, a database or a storage
+            bucket. Every edit and download happens on your own device.
           </p>
         </div>
       </div>

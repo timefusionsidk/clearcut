@@ -3,8 +3,8 @@ import type { ProcessStage } from '@/lib/types'
 import { formatBytes } from '@/lib/utils'
 
 const COPY: Record<Exclude<ProcessStage, 'idle' | 'done' | 'error'>, string> = {
-  uploading: 'Uploading image…',
-  detecting: 'Detecting subject…',
+  uploading: 'Preparing image on this device…',
+  detecting: 'Loading local AI model…',
   removing: 'Removing background…',
   preparing: 'Preparing your preview…',
 }
@@ -23,9 +23,7 @@ type Props = {
 export function Processing({ stage, progress, thumbnail, fileName, fileSize, onCancel }: Props) {
   const key = (ORDER.includes(stage as keyof typeof COPY) ? stage : 'uploading') as keyof typeof COPY
   const index = ORDER.indexOf(key)
-  // Upload progress is real; the provider gives no progress, so the bar holds
-  // at a stage floor rather than pretending to know how far along it is.
-  const bar = key === 'uploading' ? Math.max(6, progress * 0.35) : 35 + index * 20
+  const bar = key === 'detecting' && progress > 0 ? Math.max(12, progress * 0.35) : 20 + index * 25
 
   return (
     <div className="mx-auto max-w-lg rounded-xl2 border border-line bg-surface p-5 shadow-panel sm:p-7">
@@ -75,7 +73,7 @@ export function Processing({ stage, progress, thumbnail, fileName, fileSize, onC
       </ol>
 
       <div className="mt-5 flex items-center justify-between gap-3 border-t border-line pt-4">
-        <p className="text-[13px] text-ink-soft">This usually takes a few seconds.</p>
+        <p className="text-[13px] text-ink-soft">The first use may take longer while the AI downloads.</p>
         <Button variant="secondary" size="sm" onClick={onCancel}>
           Cancel
         </Button>
