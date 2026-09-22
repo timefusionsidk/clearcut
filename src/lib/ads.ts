@@ -49,7 +49,9 @@ export const adConfig = {
 /** True when a real network is wired up and can be asked for an ad. */
 export const adProviderReady =
   adConfig.demoMode ||
-  (adConfig.provider !== 'demo' && Boolean(adConfig.clientId && adConfig.rewardedSlot))
+  (adConfig.provider === 'admanager' && Boolean(adConfig.rewardedSlot)) ||
+  (adConfig.provider === 'adsense' && Boolean(adConfig.clientId && adConfig.rewardedSlot)) ||
+  adConfig.provider === 'custom'
 
 type ShowOptions = {
   /** 0–100, for the modal's progress bar. */
@@ -131,6 +133,7 @@ function runDemoAd({ onProgress, signal }: ShowOptions) {
  * `rewardedSlotGranted`.
  */
 async function runAdManagerRewarded({ onProgress, signal }: ShowOptions) {
+  await loadGooglePublisherTag()
   const googletag = (window as any).googletag
   if (!googletag || !googletag.apiReady) {
     throw new AdError('blocked', AD_MESSAGES.blocked)
@@ -209,6 +212,33 @@ async function runAdManagerRewarded({ onProgress, signal }: ShowOptions) {
         reject(new AdError('failed', AD_MESSAGES.failed))
       }
     })
+  })
+}
+
+/** Loads GPT once. A real rewarded placement still has to be approved in GAM. */
+function loadGooglePublisherTag(): Promise<void> {
+  const existing = (window as any).googletag
+  if (existing?.apiReady) return Promise.resolve()
+
+  return new Promise((resolve, reject) => {
+    const selector = 'script[data-clearcut-gpt]'
+    const script = document.querySelector<HTMLScriptElement>(selector)
+    const finish = () => ((window as any).googletag?.apiReady ? resolve() : reject(new AdError('blocked', AD_MESSAGES.blocked)))
+
+    if (script) {
+      script.addEventListener('load', finish, { once: true })
+      script.addEventListener('error', () => reject(new AdError('blocked', AD_MESSAGES.blocked)), { once: true })
+      window.setTimeout(finish, 8_000)
+      return
+    }
+
+    const next = document.createElement('script')
+    next.async = true
+    next.src = 'https://securepubads.g.doubleclick.net/tag/js/gpt.js'
+    next.dataset.clearcutGpt = 'true'
+    next.onload = finish
+    next.onerror = () => reject(new AdError('blocked', AD_MESSAGES.blocked))
+    document.head.appendChild(next)
   })
 }
 
