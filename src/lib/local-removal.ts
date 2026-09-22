@@ -1,10 +1,13 @@
 import type { BackgroundRemovalPipeline } from '@huggingface/transformers'
 
 /**
- * MIT-licensed, Transformers.js-compatible ONNX model. The model is fetched
+ * Apache-2.0, Transformers.js-compatible ONNX model. The model is fetched
  * directly by the browser on first use and cached by the browser afterwards.
  */
-const MODEL_ID = 'onnx-community/BiRefNet_lite-ONNX'
+// MODNet is substantially lighter than BiRefNet and is the official
+// Transformers.js background-removal example. It is the reliable default for
+// browser-only portrait/product cut-outs.
+const MODEL_ID = 'Xenova/modnet'
 
 let segmenter: Promise<BackgroundRemovalPipeline> | null = null
 
@@ -24,8 +27,7 @@ async function getSegmenter(onProgress: Progress) {
       if (event.status === 'progress') onProgress('detecting', event.progress)
     }
 
-    // BiRefNet can load on WebGPU then fail during inference on some Chrome
-    // drivers. Use ONNX Runtime WebAssembly as the reliable default instead.
+    // Use ONNX Runtime WebAssembly as the reliable cross-browser default.
     // It works across current Chrome, Edge, Firefox and Safari without a GPU.
     segmenter = pipeline('background-removal', MODEL_ID, {
       device: 'wasm',
