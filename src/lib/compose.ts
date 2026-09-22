@@ -164,8 +164,7 @@ export function canvasToBlob(canvas: HTMLCanvasElement, type: 'image/png' | 'ima
  * Shrinks very large local inputs before inference to avoid memory pressure on
  * phones and make browser processing faster. The original never leaves device.
  */
-export async function compressForUpload(file: File, maxEdge = 2400): Promise<File> {
-  if (file.size < 900 * 1024) return file
+export async function compressForUpload(file: File, maxEdge = 1280): Promise<File> {
   const url = URL.createObjectURL(file)
   try {
     const img = await loadImage(url)
@@ -184,7 +183,8 @@ export async function compressForUpload(file: File, maxEdge = 2400): Promise<Fil
     // Keep PNG as PNG so images that are already transparent stay lossless.
     const type = file.type === 'image/png' ? 'image/png' : 'image/jpeg'
     const blob = await canvasToBlob(canvas, type)
-    if (blob.size >= file.size) return file
+    // Local inference is constrained by pixel dimensions, not file size. Keep
+    // the resized version even if a PNG becomes a little larger in bytes.
     return new File([blob], file.name, { type })
   } catch {
     return file

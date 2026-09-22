@@ -86,8 +86,9 @@ export function useBackgroundRemoval() {
         if (task !== taskRef.current) return
         const cutoutUrl = track(URL.createObjectURL(blob))
         setState((s) => ({ ...s, stage: 'done', progress: 100, cutoutUrl, error: null }))
-      } catch {
+      } catch (error) {
         if (task !== taskRef.current) return
+        console.error('[ClearCut] local processing failed', error)
         setState((s) => ({
           ...s,
           stage: 'error',

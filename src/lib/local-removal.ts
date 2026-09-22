@@ -10,10 +10,6 @@ let segmenter: Promise<BackgroundRemovalPipeline> | null = null
 
 type Progress = (stage: 'detecting' | 'removing' | 'preparing', percent?: number) => void
 
-function supportsWebGPU() {
-  return typeof navigator !== 'undefined' && 'gpu' in navigator
-}
-
 async function getSegmenter(onProgress: Progress) {
   if (!segmenter) {
     // Dynamic import keeps the large WebAssembly runtime out of ClearCut's
@@ -28,15 +24,13 @@ async function getSegmenter(onProgress: Progress) {
       if (event.status === 'progress') onProgress('detecting', event.progress)
     }
 
-    const load = (device?: 'webgpu') =>
-      pipeline('background-removal', MODEL_ID, {
-        ...(device ? { device } : {}),
-        progress_callback,
-      }) as Promise<BackgroundRemovalPipeline>
-
-    // WebGPU is much faster where it exists. If its driver, browser or model
-    // variant cannot run, fall back to the WebAssembly/CPU runtime.
-    segmenter = supportsWebGPU() ? load('webgpu').catch(() => load()) : load()
+    // BiRefNet can load on WebGPU then fail during inference on some Chrome
+    // drivers. Use ONNX Runtime WebAssembly as the reliable default instead.
+    // It works across current Chrome, Edge, Firefox and Safari without a GPU.
+    segmenter = pipeline('background-removal', MODEL_ID, {
+      device: 'wasm',
+      progress_callback,
+    }) as Promise<BackgroundRemovalPipeline>
   }
   return segmenter
 }
@@ -44,11 +38,10 @@ async function getSegmenter(onProgress: Progress) {
 /** Returns a transparent PNG entirely from local browser inference. */
 export async function removeBackgroundLocally(file: File, onProgress: Progress): Promise<Blob> {
   onProgress('detecting', 0)
-  const remover = await getSegmenter(onProgress)
-  onProgress('removing', 5)
-
   const source = URL.createObjectURL(file)
   try {
+    const remover = await getSegmenter(onProgress)
+    onProgress('removing', 5)
     const output = await remover(source)
     onProgress('preparing', 85)
     const canvas = document.createElement('canvas')
@@ -64,6 +57,10 @@ export async function removeBackgroundLocally(file: File, onProgress: Progress):
     )
     onProgress('preparing', 100)
     return blob
+  } catch (error) {
+    // Keep a useful diagnostic in DevTools without ever exposing image bytes.
+    console.error('[ClearCut local AI]', error)
+    throw error
   } finally {
     URL.revokeObjectURL(source)
   }
