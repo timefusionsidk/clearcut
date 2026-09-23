@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Eye, Maximize2, RotateCcw, ZoomIn, ZoomOut } from 'lucide-react'
 import { Button } from './ui/Button'
 import { Segmented } from './ui/Segmented'
@@ -208,7 +209,7 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
     />
   )
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -343,7 +344,8 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
           </div>
         </aside>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
