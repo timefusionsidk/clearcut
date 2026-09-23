@@ -66,6 +66,15 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
     [],
   )
 
+  // Keep the landing page from scrolling behind the full-screen editor.
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [])
+
   /* ---------------- live preview ---------------- */
   const renderPreview = useCallback(() => {
     const target = canvasRef.current
@@ -200,9 +209,14 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
   )
 
   return (
-    <div className="rounded-xl2 border border-line bg-surface shadow-panel">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="ClearCut editor"
+      className="fixed inset-0 z-50 flex min-h-dvh flex-col bg-surface"
+    >
       {/* header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
           <div className="checkerboard checkerboard-sm hidden h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-line sm:block">
             {originalUrl && <img src={originalUrl} alt="" className="h-full w-full object-cover" />}
@@ -237,10 +251,10 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid min-h-0 flex-1 overflow-y-auto lg:grid-cols-[minmax(0,1fr)_360px] lg:overflow-hidden">
         {/* preview */}
-        <div className="flex flex-col border-b border-line lg:border-b-0 lg:border-r">
-          <div className="checkerboard relative flex flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-[360px] flex-col border-b border-line lg:min-h-0 lg:border-b-0 lg:border-r">
+          <div className="checkerboard relative flex min-h-[360px] flex-1 flex-col overflow-hidden lg:min-h-0">
             <div className="grid min-h-[300px] flex-1 place-items-center p-4 sm:min-h-[420px] sm:p-6">
               <div
                 className="max-w-full origin-center transition-transform duration-200"
@@ -250,14 +264,14 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
                   <img
                     src={originalUrl}
                     alt="Original image"
-                    className="max-h-[52vh] w-auto max-w-full rounded-sm object-contain"
+                    className="max-h-[52vh] w-auto max-w-full rounded-sm object-contain lg:max-h-[calc(100dvh-150px)]"
                   />
                 ) : (
                   <canvas
                     ref={canvasRef}
                     aria-label="Result preview"
                     role="img"
-                    className="max-h-[52vh] w-auto max-w-full rounded-sm object-contain"
+                    className="max-h-[52vh] w-auto max-w-full rounded-sm object-contain lg:max-h-[calc(100dvh-150px)]"
                   />
                 )}
               </div>
@@ -312,7 +326,7 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
         </div>
 
         {/* desktop side panel */}
-        <aside className="hidden max-h-[640px] overflow-y-auto p-5 lg:block">
+        <aside className="hidden h-full overflow-y-auto p-5 lg:block">
           <div className="grid gap-6">
             <div>
               <h3 className="mb-3 font-display text-sm font-semibold">Background</h3>
