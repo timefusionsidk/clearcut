@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AlertCircle, ImagePlus, Lock, Upload } from 'lucide-react'
 import { Button } from './ui/Button'
 import { ACCEPT_ATTR } from '@/lib/defaults'
@@ -15,6 +15,12 @@ type Props = {
 export function UploadPanel({ onFile, error, onDismissError, compact = false }: Props) {
   const input = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
+
+  useEffect(() => {
+    const openPicker = () => input.current?.click()
+    window.addEventListener('clearcut-open-picker', openPicker)
+    return () => window.removeEventListener('clearcut-open-picker', openPicker)
+  }, [])
 
   const take = (files: FileList | null) => {
     const file = files?.[0]
