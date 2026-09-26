@@ -37,7 +37,7 @@ export default function App() {
       uploadRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       return
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.dispatchEvent(new Event('clearcut-open-picker'))
   }, [editing, processing])
 
   const workArea = (
