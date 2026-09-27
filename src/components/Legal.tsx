@@ -22,6 +22,10 @@ export function LegalModal({ doc, onClose }: { doc: LegalDoc; onClose: () => voi
   )
 }
 
+export function LegalPage({ doc }: { doc: Exclude<LegalDoc, null> }) {
+  return <main className="mx-auto max-w-3xl px-4 py-16 text-ink-soft sm:px-6"><a href="/" className="text-sm text-accent hover:underline">← Back to ClearCut</a><h1 className="mt-5 font-display text-4xl font-semibold text-ink">{doc === 'privacy' ? 'Privacy policy' : 'Terms of use'}</h1><div className="mt-8 grid gap-5 text-[14px] leading-relaxed">{doc === 'privacy' ? <Privacy /> : <Terms />}<p className="border-t border-line pt-4 text-[12px] text-ink-faint">Last updated: September 27, 2026. For questions, visit the <a className="underline" href="/contact">Contact page</a>.</p></div></main>
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
