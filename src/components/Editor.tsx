@@ -8,7 +8,7 @@ import { AdjustPanel } from './AdjustPanel'
 import { DownloadPanel, type DownloadFormat, type DownloadQuality } from './DownloadPanel'
 import { DEFAULT_SETTINGS } from '@/lib/defaults'
 import { PREVIEW_MAX, STANDARD_MAX, canvasToBlob, compose, loadImage } from '@/lib/compose'
-import { buildFilename, saveBlob } from '@/lib/download'
+import { buildFilename, openMobileDownloadTarget, saveBlob } from '@/lib/download'
 import type { Adjustments, Background, EditorSettings, Shadow } from '@/lib/types'
 import { clamp, cn } from '@/lib/utils'
 
@@ -147,6 +147,8 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
   /* ---------------- download ---------------- */
   const writeFile = useCallback(async () => {
     if (!cutout) return
+    // Must happen before the async canvas work so iOS does not block the tab.
+    const mobileTarget = openMobileDownloadTarget()
     setBusy(true)
     setNote(null)
     try {
@@ -160,8 +162,10 @@ export function Editor({ cutoutUrl, originalUrl, fileName, onStartOver }: Props)
         flatten,
       })
       const blob = await canvasToBlob(rendered, flatten ? 'image/jpeg' : 'image/png')
-      saveBlob(blob, buildFilename(format, quality))
+      saveBlob(blob, buildFilename(format, quality), mobileTarget)
+      if (mobileTarget) setNote('Your image opened in a new tab. On iPhone, tap Share, then Save Image or Save to Files.')
     } catch {
+      mobileTarget?.close()
       setNote('The file could not be prepared. Try a smaller image or a different format.')
     } finally {
       setBusy(false)
