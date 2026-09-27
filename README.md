@@ -30,6 +30,10 @@ Import this repository as a Vercel project. No secret environment variables are 
 
 `VITE_` values are public browser configuration. Never place any private key in one.
 
+## Production URL
+
+The default public URL is `https://clearcut-blush.vercel.app`. When a custom domain is connected, set `SITE_URL` and `VITE_SITE_URL` in Vercel to its HTTPS origin (without a trailing slash). The prebuild script regenerates canonical, Open Graph, robots, and sitemap URLs safely.
+
 ## Launch checklist
 
 - Test the model download and processing path on a current Android phone, iPhone and desktop browser.
