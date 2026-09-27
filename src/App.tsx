@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef } from 'react'
 import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
 import { UploadPanel } from './components/UploadPanel'
@@ -10,11 +10,10 @@ import { Features } from './components/Features'
 import { FAQ } from './components/FAQ'
 import { PrivacyNote } from './components/PrivacyNote'
 import { Footer } from './components/Footer'
-import { LegalModal, type LegalDoc } from './components/Legal'
+import { LegalPage } from './components/Legal'
 import { useBackgroundRemoval } from './hooks/useBackgroundRemoval'
 
 export default function App() {
-  const [legal, setLegal] = useState<LegalDoc>(null)
   const uploadRef = useRef<HTMLDivElement>(null)
   const {
     stage,
@@ -64,6 +63,10 @@ export default function App() {
     </div>
   )
 
+  const path = window.location.pathname.replace(/\/$/, '')
+  if (path === '/privacy' || path === '/terms') return <LegalPage doc={path.slice(1) as 'privacy' | 'terms'} />
+  if (path === '/contact') return <ContactPage />
+
   return (
     <>
       <Nav onPrimary={focusUpload} />
@@ -75,8 +78,11 @@ export default function App() {
         <FAQ />
         <PrivacyNote />
       </main>
-      <Footer onOpenLegal={setLegal} />
-      <LegalModal doc={legal} onClose={() => setLegal(null)} />
+      <Footer />
     </>
   )
+}
+
+function ContactPage() {
+  return <><main className="mx-auto max-w-3xl px-4 py-16 sm:px-6"><a href="/" className="text-sm text-accent hover:underline">← Back to ClearCut</a><h1 className="mt-5 font-display text-4xl font-semibold">Contact ClearCut</h1><p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">For support, bugs, copyright concerns, or feedback, contact the project through GitHub. Please do not attach private images.</p><a className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-accent px-4 font-medium text-white hover:opacity-90" href="https://github.com/timefusionsidk/clearcut/issues/new" target="_blank" rel="noreferrer">Contact project support</a></main><Footer /></>
 }
