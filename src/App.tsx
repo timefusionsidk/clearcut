@@ -84,5 +84,5 @@ export default function App() {
 }
 
 function ContactPage() {
-  return <><main className="mx-auto max-w-3xl px-4 py-16 sm:px-6"><a href="/" className="text-sm text-accent hover:underline">← Back to ClearCut</a><h1 className="mt-5 font-display text-4xl font-semibold">Contact ClearCut</h1><p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">For support, bugs, copyright concerns, or feedback, contact the project through GitHub. Please do not attach private images.</p><a className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-accent px-4 font-medium text-white hover:opacity-90" href="https://github.com/timefusionsidk/clearcut/issues/new" target="_blank" rel="noreferrer">Contact project support</a></main><Footer /></>
+  return <><main className="mx-auto max-w-3xl px-4 py-16 sm:px-6"><a href="/" className="text-sm text-accent hover:underline">← Back to ClearCut</a><h1 className="mt-5 font-display text-4xl font-semibold">Contact ClearCut</h1><p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">For support, bugs, copyright concerns, or feedback, email us. Please do not attach private images.</p><a className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-accent px-4 font-medium text-white hover:opacity-90" href="mailto:timefusions.idk@gmail.com">timefusions.idk@gmail.com</a></main><Footer /></>
 }
