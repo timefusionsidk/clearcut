@@ -1,8 +1,4 @@
 node_modules/
 dist/
-*.tsbuildinfo
 .env
 .env.local
-.env.*.local
-.vercel/
-.DS_Store
