@@ -1,7 +1,5 @@
 import { Logo } from './Logo'
-import type { LegalDoc } from './Legal'
-
-export function Footer({ onOpenLegal }: { onOpenLegal: (doc: LegalDoc) => void }) {
+export function Footer() {
   return (
     <footer
       className="border-t border-line bg-surface"
@@ -15,20 +13,13 @@ export function Footer({ onOpenLegal }: { onOpenLegal: (doc: LegalDoc) => void }
           </p>
         </div>
         <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          <button
-            type="button"
-            onClick={() => onOpenLegal('privacy')}
-            className="min-h-11 text-[13px] text-ink-soft hover:text-ink"
-          >
+          <a href="/privacy" className="flex min-h-11 items-center text-[13px] text-ink-soft hover:text-ink">
             Privacy policy
-          </button>
-          <button
-            type="button"
-            onClick={() => onOpenLegal('terms')}
-            className="min-h-11 text-[13px] text-ink-soft hover:text-ink"
-          >
+          </a>
+          <a href="/terms" className="flex min-h-11 items-center text-[13px] text-ink-soft hover:text-ink">
             Terms of use
-          </button>
+          </a>
+          <a href="/contact" className="flex min-h-11 items-center text-[13px] text-ink-soft hover:text-ink">Contact</a>
           <span className="text-[13px] text-ink-faint">© {new Date().getFullYear()} ClearCut</span>
         </nav>
       </div>

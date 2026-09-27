@@ -5,11 +5,11 @@ import { cn } from '@/lib/utils'
 const ITEMS = [
   {
     q: 'Is ClearCut free?',
-    a: 'Yes, completely. There is no account, no trial and no subscription. Ads cover the cost of the AI processing.',
+    a: 'Yes. There is no account, trial or subscription. If standard display ads are enabled later, they will never block image processing or downloads.',
   },
   {
-    q: 'Why do I need to watch an ad?',
-    a: 'Every cutout costs money to process. One short ad per image pays for that, which is what keeps the tool free and unlimited instead of putting it behind a paywall.',
+    q: 'Does ClearCut require watching an ad?',
+    a: 'No. ClearCut never requires an ad view or ad click to unlock background removal or downloads. Optional display ads may appear only in informational areas.',
   },
   {
     q: 'Are my images stored?',
@@ -25,7 +25,7 @@ const ITEMS = [
   },
   {
     q: 'Why did my image fail to process?',
-    a: 'Usually the file was an unsupported format, larger than 10 MB, or the connection dropped mid-upload. Occasionally the AI service is at capacity — waiting a moment and trying again fixes it.',
+    a: 'Usually the file is unsupported, larger than 10 MB, or your browser does not have enough memory for local AI processing. Try a smaller image, close other tabs, or use a current browser.',
   },
   {
     q: 'Can I use my edited image commercially?',
