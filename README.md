@@ -32,7 +32,7 @@ Import this repository as a Vercel project. No secret environment variables are 
 
 ## Production URL
 
-The default public URL is `https://clearcut-blush.vercel.app`. When a custom domain is connected, set `SITE_URL` and `VITE_SITE_URL` in Vercel to its HTTPS origin (without a trailing slash). The prebuild script regenerates canonical, Open Graph, robots, and sitemap URLs safely.
+The default public URL is `https://clearcut.timefusionsidk.com`. When a custom domain is connected, set `SITE_URL` and `VITE_SITE_URL` in Vercel to its HTTPS origin (without a trailing slash). The prebuild script regenerates canonical, Open Graph, robots, and sitemap URLs safely.
 
 ## Launch checklist
 
